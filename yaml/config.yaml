@@ -1,24 +1,24 @@
 data:  ## Simulation data 
   path: "/home/alexli/simu/data/lolx_ml"
-  # files: [
-  #       "chroma_LoLX_run1_beta_10k_evt_seed114514_250326_184942_r1130.h5",
-  #       "chroma_LoLX_run1_beta_10k_evt_seed114514_250326_185413_r6289.h5",
-  #       "chroma_LoLX_run1_beta_10k_evt_seed114514_250326_185639_r3637.h5",
-  #       "chroma_LoLX_run1_beta_10k_evt_seed114514_250326_185907_r9088.h5",
-  #       "chroma_LoLX_run1_beta_10k_evt_seed114514_250326_190133_r1330.h5",
-  #       "chroma_LoLX_run1_beta_10k_evt_seed114514_250326_190401_r4646.h5",
-  #       "chroma_LoLX_run1_beta_10k_evt_seed114514_250326_190629_r2333.h5",
-  #       "chroma_LoLX_run1_beta_10k_evt_seed114514_250326_190855_r7363.h5",
-  #       "chroma_LoLX_run1_beta_10k_evt_seed114514_250326_191123_r7003.h5",
-  #       "chroma_LoLX_run1_beta_10k_evt_seed114514_250326_191349_r3542.h5",
-  #       "chroma_LoLX_run1_beta_10k_evt_seed114514_250326_191617_r3082.h5"
-  #     ]
   files: [
-    chroma_LoLX_run1_beta_10k_evt_validate_250402_133118_r8939.h5
-  ]  ## Validate data
+        "chroma_LoLX_run1_beta_10k_evt_seed114514_250326_184942_r1130.h5",
+        "chroma_LoLX_run1_beta_10k_evt_seed114514_250326_185413_r6289.h5",
+        "chroma_LoLX_run1_beta_10k_evt_seed114514_250326_185639_r3637.h5",
+        "chroma_LoLX_run1_beta_10k_evt_seed114514_250326_185907_r9088.h5",
+        "chroma_LoLX_run1_beta_10k_evt_seed114514_250326_190133_r1330.h5",
+        "chroma_LoLX_run1_beta_10k_evt_seed114514_250326_190401_r4646.h5",
+        "chroma_LoLX_run1_beta_10k_evt_seed114514_250326_190629_r2333.h5",
+        "chroma_LoLX_run1_beta_10k_evt_seed114514_250326_190855_r7363.h5",
+        "chroma_LoLX_run1_beta_10k_evt_seed114514_250326_191123_r7003.h5",
+        "chroma_LoLX_run1_beta_10k_evt_seed114514_250326_191349_r3542.h5",
+        "chroma_LoLX_run1_beta_10k_evt_seed114514_250326_191617_r3082.h5"
+      ]
+  # files: [
+  #   chroma_LoLX_run1_beta_10k_evt_validate_250402_133118_r8939.h5
+  # ]  ## Validate data
 output:
-  path: "/home/alexli/simu/ML_taining/train_data"
-  file: "processed_data_validate.h5"
+  path: "/home/alexli/LoLX_ML/training_data"
+  file: "processed_data.h5"
 
 # Correction factors for different SiPM types
 correction_factors:

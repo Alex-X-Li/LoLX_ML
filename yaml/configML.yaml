@@ -1,5 +1,5 @@
 data:
-  path: "/home/alexli/simu/ML_taining/train_data"
+  path: "/home/alexli/LoLX_ML/training_data"
   file: "processed_data.h5"
   x_dataset: "ml_data/X"              # Path to origins data in HDF5 file (in ml_data group)
   y_dataset: "ml_data/Y"              # Path to photon ratios data in HDF5 file (in ml_data group) 
@@ -7,14 +7,14 @@ data:
 
 model:
   learning_rate: 0.001                # Reduced learning rate for better convergence
-  epochs: 150                         # Increased epochs to ensure convergence
+  epochs: 100                         # Increased epochs to ensure convergence
   batch_size: 32
   hidden_layers: [64, 128, 256, 128, 64]   # Neural network architecture
   activation: "relu"                  # Activation function
   scale_y: false                      # Don't scale Y since they're already normalized ratios
   use_photon_counts: false            # Set to true if you want to include photon count as an input
-  save_path: "/home/alexli/simu/ML_taining/train_data/trained_model.keras"
+  save_path: "/home/alexli/LoLX_ML/training_data/trained_model.keras"
 
 output:
-  dir: "/home/alexli/simu/ML_taining/train_data"
+  dir: "/home/alexli/LoLX_ML/training_data"
   save_plots: true                    # Save training plots

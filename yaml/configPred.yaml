@@ -1,5 +1,5 @@
 data:
-  path: "/home/alexli/simu/ML_taining/train_data"
+  path: "/home/alexli/LoLX_ML/training_data"
   
   # Option 1: Use H5 file (recommended for consistency)
   use_h5: true
@@ -13,10 +13,10 @@ data:
   # y_file: "Y_test.npy"              # Optional for evaluation
   
 model:
-  save_path: "/home/alexli/simu/ML_taining/train_data/trained_model.keras"
+  save_path: "/home/alexli/LoLX_ML/training_data/trained_model.keras"
 
 output:
-  dir: "/home/alexli/simu/ML_taining/train_data/"
+  dir: "/home/alexli/LoLX_ML/training_data/"
   predictions_file: "Y_predictions.npy"  # Will contain photon ratios
 
 visualization:
