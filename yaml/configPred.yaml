@@ -1,0 +1,24 @@
+data:
+  path: "/home/alexli/simu/ML_taining/train_data"
+  
+  # Option 1: Use H5 file (recommended for consistency)
+  use_h5: true
+  h5_file: "processed_data_validate.h5"
+  x_dataset: "ml_data/X"              # Path to origins data in HDF5 file
+  y_dataset: "ml_data/Y"              # Optional: Path to photon ratios for evaluation
+  
+  # Option 2: Use NPY files (backward compatibility)
+  # use_h5: false
+  # x_file: "X_test.npy"
+  # y_file: "Y_test.npy"              # Optional for evaluation
+  
+model:
+  save_path: "/home/alexli/simu/ML_taining/train_data/trained_model.keras"
+
+output:
+  dir: "/home/alexli/simu/ML_taining/train_data/"
+  predictions_file: "Y_predictions.npy"  # Will contain photon ratios
+
+visualization:
+  num_samples: 3       # Number of samples to visualize
+  num_channels: 20     # Number of channels to show in each visualization

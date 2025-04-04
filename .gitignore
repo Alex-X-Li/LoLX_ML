@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual environments
+venv/
+.env/
+
+# Data and outputs
+training_data/
+outputs/
+*.h5
+*.npy
+
+# IDE files
+.vscode/
