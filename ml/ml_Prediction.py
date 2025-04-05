@@ -32,8 +32,15 @@ class MLModelInference:
         # Model path and output configuration
         self.model_path = self.config["model"]["save_path"]
         self.output_dir = self.config["output"]["dir"]
-        self.predictions_file = os.path.join(self.output_dir, self.config["output"]["predictions_file"])
         
+        # Check if predictions_file is defined in the YAML config
+        predictions_file_key = self.config["output"].get("predictions_file", None)
+        if predictions_file_key:
+            self.predictions_file = os.path.join(self.output_dir, predictions_file_key)
+        else:
+            self.predictions_file = None  # Set to None if not defined
+            # print(" Warning: 'predictions_file' not defined in the YAML configuration. Predictions will not be saved.")
+
         os.makedirs(self.output_dir, exist_ok=True)
 
         print("\nLoading model")
@@ -114,7 +121,20 @@ class MLModelInference:
                 else:
                     self.Y_true = None
                     have_y = False
-                    
+                
+                # Load source photons count data
+                if "events/source_photons" in f:
+                    self.source_photons = f["events/source_photons"][:]
+                    print(f" Source photons loaded with shape {self.source_photons.shape}")
+                else:
+                    # Try alternate location
+                    if "events/photons_per_event" in f:
+                        self.source_photons = f["events/photons_per_event"][:]
+                        print(f" Source photons loaded from photons_per_event with shape {self.source_photons.shape}")
+                    else:
+                        self.source_photons = None
+                        print(" No source photon count data found in the file")
+
                 # If model requires photon counts, try to load them
                 if self.use_photon_counts and "events/photons_per_event" in f:
                     self.photons = f["events/photons_per_event"][:]
@@ -143,7 +163,28 @@ class MLModelInference:
         print(f" Test data loaded: X shape {self.X.shape}")
         if have_y:
             print(f" Y shape {self.Y_true.shape}")
-
+    def get_source_data(self):
+        """Retrieve the original source positions and photon counts from the loaded data"""
+        
+        # Check if data has been loaded
+        if not hasattr(self, 'X') or self.X is None:
+            print("Warning: No position data (X) loaded yet")
+            origins = None
+        else:
+            origins = self.X
+            print(f"Origins shape: {origins.shape}")
+        
+        # Check if source photon data was loaded
+        if not hasattr(self, 'source_photons') or self.source_photons is None:
+            print("Warning: No source photon data loaded")
+            source_photons = None
+        else:
+            source_photons = self.source_photons
+            print(f"Source photons shape: {source_photons.shape}")
+            print(f"Mean photons per event: {np.mean(source_photons):.2f}")
+            
+        return origins, source_photons
+        
     def predict(self):
         print("\nGenerating predictions")
         
@@ -162,10 +203,10 @@ class MLModelInference:
         # Ensure all values are non-negative (ratios can't be negative)
         Y_pred = np.maximum(0, Y_pred)
         
-        # Save ratio predictions
-        np.save(self.predictions_file, Y_pred)
-        print(f" Ratio predictions saved to {self.predictions_file}")
-        
+        # Save ratio predictions only if predictions_file is defined
+        if self.predictions_file:
+            np.save(self.predictions_file, Y_pred)
+            print(f" Ratio predictions saved to {self.predictions_file}")
         return Y_pred
 
     def evaluate(self, Y_pred):

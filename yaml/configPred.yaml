@@ -17,7 +17,7 @@ model:
 
 output:
   dir: "/home/alexli/LoLX_ML/training_data/"
-  predictions_file: "Y_predictions.npy"  # Will contain photon ratios
+  # predictions_file: "Y_predictions.npy"  # Will contain photon ratios
 
 visualization:
   num_samples: 3       # Number of samples to visualize
