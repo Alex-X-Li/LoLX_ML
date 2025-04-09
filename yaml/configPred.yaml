@@ -6,12 +6,7 @@ data:
   h5_file: "processed_data_validate.h5"
   x_dataset: "ml_data/X"              # Path to origins data in HDF5 file
   y_dataset: "ml_data/Y"              # Optional: Path to photon ratios for evaluation
-  
-  # Option 2: Use NPY files (backward compatibility)
-  # use_h5: false
-  # x_file: "X_test.npy"
-  # y_file: "Y_test.npy"              # Optional for evaluation
-  
+
 model:
   save_path: "/home/alexli/LoLX_ML/training_data/trained_model.keras"
 

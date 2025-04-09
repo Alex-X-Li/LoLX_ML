@@ -1,7 +1,7 @@
 data:
   path: "/home/alexli/LoLX_ML/training_data"
   file: "processed_data.h5"
-  x_dataset: "ml_data/X"              # Path to origins data in HDF5 file (in ml_data group)
+  x_dataset: "ml_data/X"              # Path to position data in HDF5 file (in ml_data group)
   y_dataset: "ml_data/Y"              # Path to photon ratios data in HDF5 file (in ml_data group) 
   test_size: 0.1                      # Fraction of data to use for testing
 

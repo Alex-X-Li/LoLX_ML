@@ -169,7 +169,7 @@ def DAQchan_to_SiPM(daq_channel):
     return daq_to_sipm_map.get(daq_channel, None)
 
 def MERCIchan_to_SiPM(merci_chan):
-    config_path = '/home/alexli/merci/scripts/lolx/SiPMid_vs_chans.csv'
+    config_path = '/home/alexli/LoLX_ML/ml/SiPMid_vs_chans.csv'
     sipmID = []
     with open(config_path, mode='r') as file:
         csv_reader = csv.DictReader(file)
@@ -179,7 +179,7 @@ def MERCIchan_to_SiPM(merci_chan):
         return sipmID
 
 def SiPM_to_MERCIchan(sipm_id):
-    config_path = '/home/alexli/merci/scripts/lolx/SiPMid_vs_chans.csv'
+    config_path = '/home/alexli/LoLX_ML/ml/SiPMid_vs_chans.csv'
     with open(config_path, mode='r') as file:
         csv_reader = csv.DictReader(file)
         for row in csv_reader:

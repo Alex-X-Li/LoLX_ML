@@ -1,0 +1,25 @@
+data:
+  path: "/home/alexli/LoLX_ML/training_data"
+  file: "processed_data.h5"
+  x_dataset: "ml_data/Y"              # Now using Y (photon ratios) as input 
+  y_dataset: "ml_data/X"              # Now using X (positions) as output
+  test_size: 0.1                      # Fraction of data to use for testing
+  use_merci_chan: true
+  bad_sipms: [5,6,7,8,11,25,36,42,44,64,66]
+
+model:
+  learning_rate: 0.001                # Learning rate
+  epochs: 100                         # More epochs for inverse problem
+  batch_size: 64
+  hidden_layers: [128, 128, 64, 32]  # Neural network architecture (larger for inverse problem)
+  activation: "relu"                  # Activation function
+  scale_x: false                      # Don't scale X since they're already normalized ratios
+  # Add L2 regularization parameters
+  # l2_lambda: 0.001                     # L2 regularization strength
+  use_l2_regularization: false         # Enable/disable L2 regularization
+  use_photon_counts: false            # Set to true if you want to include photon count as input
+  save_path: "/home/alexli/LoLX_ML/training_data/inverse_model.keras"
+
+output:
+  dir: "/home/alexli/LoLX_ML/training_data/inverse_model"
+  save_plots: true                    # Save training plots

@@ -57,6 +57,10 @@ class PositionReconstructor:
         return predictions[self.active_channels] / norm 
     
     def negative_log_likelihood(self, params, measured_intensities):
+        """
+        Compute the negative log likelihood (KL divergence) between 
+        measured and expected intensities plus a regularization term.
+        """
         source_position = params[:3]
         expected = self.expected_intensity(source_position)
         
@@ -67,26 +71,67 @@ class PositionReconstructor:
             np.log((measured_intensities + epsilon) / (expected + epsilon))
         )
         
-        # Much weaker regularization
-        reg_strength = 0.00001  # Very small regularization
+        # Weak regularization
+        reg_strength = 0.00001  
         reg_term = reg_strength * np.sum(source_position**2) / 400
         
         return kl_div + reg_term
-    
-    def reconstruct_position(self, charge_pe_norm, event_idx, initial_guess=None):
+
+    def mae_loss(self, params, measured_intensities):
         """
-        Reconstruct source position from normalized charge data
+        Compute the mean absolute error (MAE) between measured and expected intensities.
+        A weak regularization term is added similar to the KL-based loss.
+        """
+        source_position = params[:3]
+        expected = self.expected_intensity(source_position)
+        
+        # Mean Absolute Error calculation
+        mae = np.mean(np.abs(measured_intensities - expected))
+        
+        # Weak regularization
+        reg_strength = 0.00001
+        reg_term = reg_strength * np.sum(source_position**2) / 400
+        
+        return mae + reg_term
+
+    def reconstruct_position(self, charge_pe_norm, event_idx, initial_guess=None, loss_metric="kl"):
+        """
+        Reconstruct source position from normalized charge data.
+        
+        Parameters:
+        - charge_pe_norm: numpy.ndarray
+          The array containing normalized charge data.
+        - event_idx: int
+          Index of the event to be reconstructed.
+        - initial_guess: array-like, optional
+          Initial guess for the reconstruction [x, y, z]. Default is [0, 0, 0].
+        - loss_metric: str, optional
+          Loss function to use for optimization. Options:
+            - "kl": (default) negative log likelihood (KL divergence)
+            - "mae": mean absolute error (MAE)
+        
+        Returns:
+        - dict:
+            'position': Reconstructed [x, y, z] position,
+            'success': Boolean flag indicating if optimization was successful,
+            'nll': Final value of the loss function.
         """
         measured_intensities = charge_pe_norm[event_idx, self.active_channels]
         epsilon = 1e-10
         measured_intensities = measured_intensities + epsilon
         measured_intensities = measured_intensities / np.sum(measured_intensities)
         
-        # Use single initial guess of [0,0,0]
+        # Set initial guess
         initial_guess = np.array([0, 0, 0]) if initial_guess is None else np.array(initial_guess)
         
+        # Select the loss function based on loss_metric parameter
+        if loss_metric.lower() == "mae":
+            loss_fn = self.mae_loss
+        else:
+            loss_fn = self.negative_log_likelihood
+        
         best_result = None
-        best_nll = np.inf
+        best_loss = np.inf
         
         methods = ['L-BFGS-B', 'Nelder-Mead']
         
@@ -110,7 +155,7 @@ class PositionReconstructor:
             
             try:
                 result = minimize(
-                    self.negative_log_likelihood,
+                    loss_fn,
                     initial_guess,
                     args=(measured_intensities,),
                     method=method,
@@ -118,8 +163,8 @@ class PositionReconstructor:
                     options=options
                 )
                 
-                if result.success and result.fun < best_nll:
-                    best_nll = result.fun
+                if result.success and result.fun < best_loss:
+                    best_loss = result.fun
                     best_result = result
                     
             except Exception as e:
