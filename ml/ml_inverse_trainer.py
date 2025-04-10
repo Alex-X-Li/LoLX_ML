@@ -87,29 +87,28 @@ class InverseMLModelTrainer:
             Y = f[self.y_dataset][:]  # Position data (target)
             X_sipm = f[self.x_dataset][:]  # Photon ratios data (input)
             
-            # Check input data before normalization
-            print(f" Input data statistics before normalization:")
+            # Check input data before processing
+            print(f" Input data statistics before processing:")
             print(f" - Number of zeros: {np.sum(np.sum(X_sipm, axis=1) == 0)}")
             
-            
-            # Normalize data safely
-            X_sipm = X_sipm / np.sum(X_sipm, axis=1, keepdims=True)
-            ## make NaN values zero
-            X_sipm = np.nan_to_num(X_sipm, nan=0.0)
-            
-            # Verify normalized data
-            print(f" Normalized data statistics:")
-            print(f" - Min value: {np.min(X_sipm):.4f}")
-            print(f" - Max value: {np.max(X_sipm):.4f}")
-            print(f" - Mean value: {np.mean(X_sipm):.4f}")
-            
-            # Convert to MERCI channels if configured
+            # Convert to MERCI channels first if configured
             if self.use_merci_chan:
-                print(f" Converting SiPM ratios (shape: {X_sipm.shape}) to MERCI channels...")
+                print(f" Converting raw SiPM data (shape: {X_sipm.shape}) to MERCI channels...")
                 X = sipmid_to_merci(X_sipm, bad_sipm=self.bad_sipms)
                 print(f" Converted to MERCI channels shape: {X.shape}")
             else:
                 X = X_sipm
+            
+            # Then normalize data safely
+            X = X / np.sum(X, axis=1, keepdims=True)
+            ## make NaN values zero
+            X = np.nan_to_num(X, nan=0.0)
+            
+            # Verify normalized data
+            print(f" Normalized data statistics:")
+            print(f" - Min value: {np.min(X):.4f}")
+            print(f" - Max value: {np.max(X):.4f}")
+            print(f" - Mean value: {np.mean(X):.4f}")
             
             # Optionally load photons per event if needed for the model
             if self.use_photon_counts:

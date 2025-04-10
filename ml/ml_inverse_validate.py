@@ -132,16 +132,17 @@ class InverseModelValidator:
             with h5py.File(os.path.join(self.data_path, self.h5_file), "r") as f:
                 # Load SiPM data first
                 X_sipm = f[self.x_dataset][:]
-                ## normalize sipm data
-                X_sipm = X_sipm / np.sum(X_sipm, axis=1, keepdims=True)
-                X_sipm = np.nan_to_num(X_sipm, nan=0.0)
-                # Convert to MERCI channels if configured
+                # Convert to MERCI channels first if configured
                 if self.use_merci_chan:
                     print(f" Converting SiPM data (shape: {X_sipm.shape}) to MERCI channels...")
                     self.X = sipmid_to_merci(X_sipm, bad_sipm=self.bad_sipms)
                     print(f" Converted to MERCI channels shape: {self.X.shape}")
                 else:
                     self.X = X_sipm
+                    
+                # Then normalize data safely
+                self.X = self.X / np.sum(self.X, axis=1, keepdims=True)
+                self.X = np.nan_to_num(self.X, nan=0.0)
                 
                 # Load true positions for validation
                 if self.true_positions_dataset in f:
