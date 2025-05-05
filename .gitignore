@@ -11,6 +11,7 @@ venv/
 # Data and outputs
 training_data/
 outputs/
+plot/
 *.h5
 *.npy
 

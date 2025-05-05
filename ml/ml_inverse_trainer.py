@@ -56,6 +56,10 @@ class InverseMLModelTrainer:
 
         self.output_dir = self.config["output"]["dir"]
         os.makedirs(self.output_dir, exist_ok=True)
+        
+        # Add plot directory configuration
+        self.plot_dir = self.config.get("plot", {}).get("dir", self.output_dir)
+        os.makedirs(self.plot_dir, exist_ok=True)
 
         self.X_train, self.X_test = None, None  # Will hold photon ratios (channels)
         self.Y_train, self.Y_test = None, None  # Will hold positions (3D coordinates)
@@ -295,8 +299,8 @@ class InverseMLModelTrainer:
         plt.legend()
         
         plt.tight_layout()
-        plt.savefig(os.path.join(self.output_dir, 'inverse_training_history.png'))
-        print(" Training history plot saved")
+        plt.savefig(os.path.join(self.plot_dir, 'inverse_training_history.png'))
+        print(f" Training history plot saved to {self.plot_dir}")
 
     def evaluate_model(self):
         print("\nEvaluating inverse model")
@@ -371,8 +375,8 @@ class InverseMLModelTrainer:
         plt.axvline(x=0, color='r', linestyle='--')
         
         plt.tight_layout()
-        plt.savefig(os.path.join(self.output_dir, 'position_errors.png'))
-        print(" Position error histograms saved")
+        plt.savefig(os.path.join(self.plot_dir, 'position_errors.png'))
+        print(f" Position error histograms saved to {self.plot_dir}")
         
         # Calculate Euclidean distance errors
         euclidean_errors = np.sqrt(np.sum(np.square(errors), axis=1))
@@ -387,8 +391,8 @@ class InverseMLModelTrainer:
         plt.axvline(x=np.mean(euclidean_errors), color='r', linestyle='--', 
                    label=f'Mean: {np.mean(euclidean_errors):.4f}')
         plt.legend()
-        plt.savefig(os.path.join(self.output_dir, 'euclidean_errors.png'))
-        print(" Euclidean distance error histogram saved")
+        plt.savefig(os.path.join(self.plot_dir, 'euclidean_errors.png'))
+        print(f" Euclidean distance error histogram saved to {self.plot_dir}")
 
     def plot_3d_positions(self, y_true, y_pred, num_samples=100):
         """Plot 3D scatter of actual vs predicted positions"""
@@ -421,8 +425,8 @@ class InverseMLModelTrainer:
         ax.set_title('Actual vs Predicted Positions')
         ax.legend()
         
-        plt.savefig(os.path.join(self.output_dir, '3d_position_comparison.png'))
-        print(f" 3D position comparison plot saved with {num_samples} samples")
+        plt.savefig(os.path.join(self.plot_dir, '3d_position_comparison.png'))
+        print(f" 3D position comparison plot saved to {self.plot_dir} with {num_samples} samples")
 
     def save_model(self):
         # Save model architecture and weights

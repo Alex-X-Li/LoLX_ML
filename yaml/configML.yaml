@@ -1,20 +1,25 @@
 data:
   path: "/home/alexli/LoLX_ML/training_data"
-  file: "processed_data.h5"
+  file: "Processed_training_uncorr_1M.h5"
   x_dataset: "ml_data/X"              # Path to position data in HDF5 file (in ml_data group)
   y_dataset: "ml_data/Y"              # Path to photon ratios data in HDF5 file (in ml_data group) 
   test_size: 0.1                      # Fraction of data to use for testing
 
 model:
   learning_rate: 0.001                # Reduced learning rate for better convergence
+  learning_rate_scheduler: true       # Add this line
+  lr_patience: 8                     # Add this line
+  lr_reduction_factor: 0.4            # Add this line
+  min_learning_rate: 0.000005         # Add this line
   epochs: 100                         # Increased epochs to ensure convergence
-  batch_size: 32
-  hidden_layers: [64, 128, 256, 128, 64]   # Neural network architecture
-  activation: "relu"                  # Activation function
+  batch_size: 64
+  hidden_layers: [1024, 1024, 512, 512, 256]   # Neural network architecture
+  activation: "elu"                  # Activation function
   scale_y: false                      # Don't scale Y since they're already normalized ratios
   use_photon_counts: false            # Set to true if you want to include photon count as an input
-  save_path: "/home/alexli/LoLX_ML/training_data/trained_model.keras"
+  save_path: "/home/alexli/LoLX_ML/training_data/uncorr_model/trained_model_uncorr.keras"
+  # dropout_rate: 0.2                   # A rate of 0.2 means 20% of neurons are temporarily disabled in each pass
 
 output:
-  dir: "/home/alexli/LoLX_ML/training_data"
+  dir: "/home/alexli/LoLX_ML/training_data/uncorr_model"
   save_plots: true                    # Save training plots

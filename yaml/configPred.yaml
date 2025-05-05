@@ -1,17 +1,16 @@
 data:
   path: "/home/alexli/LoLX_ML/training_data"
   
-  # Option 1: Use H5 file (recommended for consistency)
   use_h5: true
-  h5_file: "processed_data_validate.h5"
+  h5_file: "Processed_validate_uncorr.h5"
   x_dataset: "ml_data/X"              # Path to origins data in HDF5 file
   y_dataset: "ml_data/Y"              # Optional: Path to photon ratios for evaluation
 
 model:
-  save_path: "/home/alexli/LoLX_ML/training_data/trained_model.keras"
+  save_path: "/home/alexli/LoLX_ML/training_data/uncorr_model/trained_model_uncorr.keras"
 
 output:
-  dir: "/home/alexli/LoLX_ML/training_data/"
+  dir: "/home/alexli/LoLX_ML/plot/"
   # predictions_file: "Y_predictions.npy"  # Will contain photon ratios
 
 visualization:

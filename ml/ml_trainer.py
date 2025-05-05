@@ -189,31 +189,45 @@ class MLModelTrainer:
         # Get the output dimension from Y shape
         output_dim = self.Y_train.shape[1]
         
+        # Get L2 regularization parameter
+        l2_reg = self.config["model"].get("l2_regularization", 0)
+        
         if self.use_photon_counts:
             # Create a model that takes both position and photon count as input
             input_pos = Input(shape=(3,), name="position_input")
             input_photons = Input(shape=(1,), name="photon_count_input")
             
-            # Position branch
-            x = Dense(self.hidden_layers[0], activation=self.activation)(input_pos)
+            # Position branch with L2 regularization
+            x = Dense(self.hidden_layers[0], activation=self.activation, 
+                     kernel_regularizer=tf.keras.regularizers.l2(l2_reg))(input_pos)
             for units in self.hidden_layers[1:-1]:
-                x = Dense(units, activation=self.activation)(x)
+                x = Dense(units, activation=self.activation,
+                         kernel_regularizer=tf.keras.regularizers.l2(l2_reg))(x)
             
             # Combine with photon count
             combined = Concatenate()([x, input_photons])
             
             # Additional layers after combining
-            x = Dense(self.hidden_layers[-1], activation=self.activation)(combined)
+            x = Dense(self.hidden_layers[-1], activation=self.activation,
+                     kernel_regularizer=tf.keras.regularizers.l2(l2_reg))(combined)
             outputs = Dense(output_dim)(x)
             
             self.model = Model(inputs=[input_pos, input_photons], outputs=outputs)
         else:
             # Standard sequential model with just position input
-            layers = [Dense(self.hidden_layers[0], input_dim=3, activation=self.activation)]
+            layers = [Dense(self.hidden_layers[0], input_dim=3, activation=self.activation,
+                            kernel_regularizer=tf.keras.regularizers.l2(l2_reg))]
             
+            # Get dropout rate from config
+            dropout_rate = self.config["model"].get("dropout_rate", 0)
+            
+            # Add remaining hidden layers with dropout
             for units in self.hidden_layers[1:]:
-                layers.append(Dense(units, activation=self.activation))
-                
+                layers.append(Dense(units, activation=self.activation,
+                                   kernel_regularizer=tf.keras.regularizers.l2(l2_reg)))
+                if dropout_rate > 0:
+                    layers.append(tf.keras.layers.Dropout(dropout_rate))
+                    
             # Final output layer
             layers.append(Dense(output_dim))
             
@@ -229,24 +243,38 @@ class MLModelTrainer:
     def train_model(self):
         print("\nTraining model")
         
-        # Create a history callback for plotting
+        # Create callbacks list
+        callbacks = []
+        
+        # Add learning rate scheduler if enabled
+        if self.config["model"].get("learning_rate_scheduler", False):
+            reduce_lr = tf.keras.callbacks.ReduceLROnPlateau(
+                monitor='val_loss',
+                factor=self.config["model"].get("lr_reduction_factor", 0.5),
+                patience=self.config["model"].get("lr_patience", 10),
+                min_lr=self.config["model"].get("min_learning_rate", 0.00001),
+                verbose=1
+            )
+            callbacks.append(reduce_lr)
+        
+        # Add callbacks to fit function
         if self.use_photon_counts:
-            # Training with both inputs
             history = self.model.fit(
                 [self.X_train, self.photons_train], self.Y_train,
                 epochs=self.epochs,
                 batch_size=self.batch_size,
                 validation_split=0.15,
-                verbose=1
+                verbose=1,
+                callbacks=callbacks  # Add this line
             )
         else:
-            # Standard training
             history = self.model.fit(
                 self.X_train, self.Y_train,
                 epochs=self.epochs,
                 batch_size=self.batch_size,
                 validation_split=0.15,
-                verbose=1
+                verbose=1,
+                callbacks=callbacks  # Add this line
             )
             
         print(" Training completed")
@@ -257,6 +285,9 @@ class MLModelTrainer:
         return history
 
     def plot_history(self, history):
+        plot_dir = os.path.join(os.path.dirname(__file__), "../plot")
+        os.makedirs(plot_dir, exist_ok=True)
+
         plt.figure(figsize=(12, 10))
         
         # Plot loss
@@ -300,7 +331,7 @@ class MLModelTrainer:
         plt.legend()
         
         plt.tight_layout()
-        plt.savefig(os.path.join(self.output_dir, 'training_history.png'))
+        plt.savefig(os.path.join(plot_dir, 'training_history.png'))
         print(" Training history plot saved")
 
     def evaluate_model(self):
@@ -336,7 +367,9 @@ class MLModelTrainer:
         self.plot_relative_errors(self.Y_test, y_pred)
 
     def plot_predictions(self, y_true, y_pred, num_samples=5, num_channels=10):
-        """Plot predictions vs actual for a few samples"""
+        plot_dir = os.path.join(os.path.dirname(__file__), "../plot")
+        os.makedirs(plot_dir, exist_ok=True)
+
         plt.figure(figsize=(15, 10))
         
         for i in range(min(num_samples, len(y_true))):
@@ -353,11 +386,13 @@ class MLModelTrainer:
             plt.legend()
             
         plt.tight_layout()
-        plt.savefig(os.path.join(self.output_dir, 'prediction_samples.png'))
+        plt.savefig(os.path.join(plot_dir, 'prediction_samples.png'))
         print(f" Prediction plot saved with {num_samples} samples and {num_channels} channels each")
 
     def plot_relative_errors(self, y_true, y_pred):
-        """Plot the relative errors as percentages"""
+        plot_dir = os.path.join(os.path.dirname(__file__), "../plot")
+        os.makedirs(plot_dir, exist_ok=True)
+
         # Calculate relative errors, avoiding division by zero
         non_zero_mask = y_true != 0
         relative_errors = np.zeros_like(y_true)
@@ -372,7 +407,8 @@ class MLModelTrainer:
         plt.ylabel('Average Percentage Error (%)')
         plt.title('Mean Percentage Error by Channel')
         plt.tight_layout()
-        plt.savefig(os.path.join(self.output_dir, 'channel_percentage_errors.png'))
+        plt.savefig(os.path.join(plot_dir, 'channel_percentage_errors.png'))
+        print(" Channel percentage error plot saved")
 
     def save_model(self):
         # Save model architecture and weights

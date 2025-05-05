@@ -6,6 +6,7 @@ import yaml
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 import sys
+import glob
 
 # sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -22,9 +23,17 @@ class LoLXDataProcessor:
             self.config = yaml.safe_load(file)
 
         self.data_path = self.config["data"]["path"]
-        self.file_names = self.config["data"]["files"]  # Now expecting a list of files
+        self.file_pattern = self.config["data"].get("file_pattern", None)  # New line
         self.output_dir = self.config["output"]["path"]
         self.output_h5_file = self.config["output"]["file"]
+
+        # If a file pattern is specified, gather all matching files. Otherwise, read from "files".
+        if self.file_pattern:
+            pattern_path = os.path.join(self.data_path, self.file_pattern)
+            matching_files = glob.glob(pattern_path)
+            self.file_names = [os.path.basename(f) for f in matching_files]
+        else:
+            self.file_names = self.config["data"]["files"]
         
         # Get correction factors from config or use defaults
         self.correction_factors = self.config.get("correction_factors", {})

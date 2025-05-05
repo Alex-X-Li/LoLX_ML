@@ -88,9 +88,16 @@ class InverseModelValidator:
     def load_scalers(self):
         print("\nLoading scalers")
         
-        scaler_path = os.path.join(self.output_dir, "scalers")
+        # Use model's scaler_dir if specified, otherwise use output_dir
+        scaler_path = self.config["model"].get("scaler_dir", None)
+        if not scaler_path:
+            scaler_path = os.path.join(self.output_dir, "scalers")
+        
         if os.path.exists(scaler_path):
-            # New structure with scalers in a dedicated directory
+            # If path is just a directory without 'scalers' folder
+            if not os.path.exists(os.path.join(scaler_path, "scaler_X.pkl")) and os.path.exists(os.path.join(scaler_path, "scalers", "scaler_X.pkl")):
+                scaler_path = os.path.join(scaler_path, "scalers")
+                
             self.scaler_X = joblib.load(os.path.join(scaler_path, "scaler_X.pkl"))
             print(f" X scaler loaded from: {os.path.join(scaler_path, 'scaler_X.pkl')}")
             

@@ -3,17 +3,17 @@ data:
   
   # Using H5 file for data
   use_h5: true
-  h5_file: "processed_data_validate.h5"
+  h5_file: "Processed_validate_uncorr.h5"
   x_dataset: "ml_data/Y"              # Path to photon ratios in HDF5 file (input to inverse model)
   true_positions_dataset: "events/origins"  # Path to true positions for validation
   use_merci_chan: true  # Changed from use_merci to use_merci_chan
   bad_sipms: [5,6,7,8,11,25,36,42,44,64,66]
   
 model:
-  save_path: "/home/alexli/LoLX_ML/training_data/inverse_model.keras"
-
+  save_path: "/home/alexli/LoLX_ML/training_data/uncorr_inverse_model/uncorr_inverse_model.keras"
+  scaler_dir: "/home/alexli/LoLX_ML/training_data/uncorr_model/scalers"  # Add this line
 output:
-  dir: "/home/alexli/LoLX_ML/training_data/"
+  dir: "/home/alexli/LoLX_ML/plot/"
   # predictions_file: "predicted_positions.npy"  # Will contain predicted positions
 
 visualization:

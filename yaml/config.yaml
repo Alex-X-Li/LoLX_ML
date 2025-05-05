@@ -1,30 +1,31 @@
 data:  ## Simulation data 
   path: "/home/alexli/simu/data/lolx_ml"
-  files: [
-        "chroma_LoLX_run1_beta_10k_evt_seed114514_250326_184942_r1130.h5",
-        "chroma_LoLX_run1_beta_10k_evt_seed114514_250326_185413_r6289.h5",
-        "chroma_LoLX_run1_beta_10k_evt_seed114514_250326_185639_r3637.h5",
-        "chroma_LoLX_run1_beta_10k_evt_seed114514_250326_185907_r9088.h5",
-        "chroma_LoLX_run1_beta_10k_evt_seed114514_250326_190133_r1330.h5",
-        "chroma_LoLX_run1_beta_10k_evt_seed114514_250326_190401_r4646.h5",
-        "chroma_LoLX_run1_beta_10k_evt_seed114514_250326_190629_r2333.h5",
-        "chroma_LoLX_run1_beta_10k_evt_seed114514_250326_190855_r7363.h5",
-        "chroma_LoLX_run1_beta_10k_evt_seed114514_250326_191123_r7003.h5",
-        "chroma_LoLX_run1_beta_10k_evt_seed114514_250326_191349_r3542.h5",
-        "chroma_LoLX_run1_beta_10k_evt_seed114514_250326_191617_r3082.h5"
-      ]
   # files: [
-  #   chroma_LoLX_run1_beta_10k_evt_validate_250402_133118_r8939.h5
+  #       "chroma_LoLX_run1_beta_10k_evt_seed114514_250326_184942_r1130.h5",
+  #       "chroma_LoLX_run1_beta_10k_evt_seed114514_250326_185413_r6289.h5",
+  #       "chroma_LoLX_run1_beta_10k_evt_seed114514_250326_185639_r3637.h5",
+  #       "chroma_LoLX_run1_beta_10k_evt_seed114514_250326_185907_r9088.h5",
+  #       "chroma_LoLX_run1_beta_10k_evt_seed114514_250326_190133_r1330.h5",
+  #       "chroma_LoLX_run1_beta_10k_evt_seed114514_250326_190401_r4646.h5",
+  #       "chroma_LoLX_run1_beta_10k_evt_seed114514_250326_190629_r2333.h5",
+  #       "chroma_LoLX_run1_beta_10k_evt_seed114514_250326_190855_r7363.h5",
+  #       "chroma_LoLX_run1_beta_10k_evt_seed114514_250326_191123_r7003.h5",
+  #       "chroma_LoLX_run1_beta_10k_evt_seed114514_250326_191349_r3542.h5",
+  #       "chroma_LoLX_run1_beta_10k_evt_seed114514_250326_191617_r3082.h5"
+  #     ]
+  file_pattern: "*356kev_beta_10kevt_train*.h5"
+  # files: [
+  #   chroma_LoLX_run1_beta_10k_evt_validate_250402_163434_r6602.h5
   # ]  ## Validate data
 output:
   path: "/home/alexli/LoLX_ML/training_data"
-  file: "processed_data.h5"
+  file: "Processed_validate_uncorr_1M.h5"
 
 # Correction factors for different SiPM types
-correction_factors:
-  fbk: 0.20817689894365624  # Correction factor for FBK type SiPMs
-  hpk: 0.18424097604874246  # Correction factor for HPK type SiPMs
-  pmt: 0.43051981586189636  # Correction factor for PMT type SiPMs
+# correction_factors:
+  # fbk: 0.20817689894365624  # Correction factor for FBK type SiPMs
+  # hpk: 0.18424097604874246  # Correction factor for HPK type SiPMs
+  # pmt: 0.43051981586189636  # Correction factor for PMT type SiPMs
 
 # Plot settings
 plot:

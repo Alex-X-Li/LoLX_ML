@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import plotly.graph_objects as go
 import numpy as np
+import os
 
 # corrected channel mapping
 ChannelMap = {
@@ -236,6 +237,9 @@ def GetSiPMsByType(sipm_type, csv_file_path='SiPMid_vs_chans.csv'):
         list: List of tuples (sipm_id, merci_channel) for all SiPMs of the specified type,
               or empty list if no SiPMs are found for this type
     """
+    # Construct the absolute path to the CSV file
+    csv_file_path = os.path.join(os.path.dirname(__file__), csv_file_path)
+    
     # Load numeric data (SiPM IDs and MERCI channels)
     data = np.loadtxt(
         csv_file_path, 

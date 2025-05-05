@@ -1,6 +1,6 @@
 data:
   path: "/home/alexli/LoLX_ML/training_data"
-  file: "processed_data.h5"
+  file: "Processed_training_uncorr.h5"
   x_dataset: "ml_data/Y"              # Now using Y (photon ratios) as input 
   y_dataset: "ml_data/X"              # Now using X (positions) as output
   test_size: 0.1                      # Fraction of data to use for testing
@@ -18,8 +18,11 @@ model:
   # l2_lambda: 0.001                     # L2 regularization strength
   use_l2_regularization: false         # Enable/disable L2 regularization
   use_photon_counts: false            # Set to true if you want to include photon count as input
-  save_path: "/home/alexli/LoLX_ML/training_data/inverse_model.keras"
+  save_path: "/home/alexli/LoLX_ML/training_data/uncorr_inverse_model/uncorr_inverse_model.keras"
 
 output:
-  dir: "/home/alexli/LoLX_ML/training_data/inverse_model"
+  dir: "/home/alexli/LoLX_ML/training_data/uncorr_inverse_model"
   save_plots: true                    # Save training plots
+
+plot:
+  dir: "/home/alexli/LoLX_ML/plot"
