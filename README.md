@@ -64,6 +64,23 @@ python ml/ml_Prediction.py --config yaml/configPred.yaml
 - Jupyter notebooks demonstrate position reconstruction workflow.
 - The MLPositionReconstructor class handles loading models and scalers for fast predictions.
 
+### Digitizer Saturation (Run-1 data)
+Bright events clip the digitizer (-1.05 V). The lolx_ana PE files mark each SiPM MERCI channel as `sat` 0 (unsaturated),
+1 (clipped, recovered `pe_rec`) or 2 (deeply clipped, only `pe_lo <= true <= pe_hi`). `ml/saturation.py` brings this
+into training and reconstruction:
+- `SaturationEmulator`: simulated per-SiPM counts -> MERCI channels (Run-1 turned-off SiPMs removed) -> the same
+  saturated fields as data. Each channel saturates at its own PE level, `|clip voltage| / (pulse height per PE)`
+  measured from data (83-139 PE for HPK, 228-365 PE for FBK channels).
+- `build_features`: the inverse-model input from simulation or data alike (27 ratios with `sat` 2 at `pe_lo`,
+  48 saturation flags, log light outside the `sat` 2 channels).
+- `npe_central`: emitted photons from the channels without `sat` 2 (forward-model LCE), so clipped channels do not
+  pull the energy low.
+- Calibration: `python scripts/calibrate_saturation.py --pe-dir <lolx_ana run1/pe>` writes
+  `yaml/saturation_calib.yaml` (per-channel saturation PE level, plateau and recovery fits) and
+  `yaml/saturation_hi_over_lo.npz` (data deep-clip table). The committed files come from Run-1 runs 31056, 31057,
+  31060 and 31061.
+- Test: `python -m unittest discover -s test -p "test_saturation.py"`.
+
 ### Visualization
 - Visualization scripts are integrated into the data processors and inference scripts to generate plots for analysis.
 
